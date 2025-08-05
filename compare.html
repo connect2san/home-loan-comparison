@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare Home Loans</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded shadow-md w-full max-w-3xl">
+    <h1 class="text-2xl font-bold mb-6 text-center">Home Loan Comparison Calculator</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Current Loan Inputs -->
+      <div>
+        <h2 class="font-semibold mb-2">Current Loan</h2>
+        <input type="number" id="currentRepayment" placeholder="Monthly Repayment ($)" class="input mb-2">
+      </div>
+
+      <!-- New Loan Inputs -->
+      <div>
+        <h2 class="font-semibold mb-2">New Loan</h2>
+        <input type="number" id="newRepayment" placeholder="Monthly Repayment ($)" class="input mb-2">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+      <input type="number" id="cashback" placeholder="Cashback Amount ($)" class="input mb-2">
+      <input type="number" id="annualFee" placeholder="Annual Fee ($)" class="input mb-2">
+    </div>
+
+    <input type="number" id="extraBenefits" placeholder="Extra Benefits Amount ($)" class="input w-full mb-4">
+
+    <button onclick="compareLoans()" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 w-full">Compare</button>
+
+    <div id="comparisonResult" class="mt-6 hidden p-4 bg-gray-100 rounded">
+      <h3 class="text-lg font-semibold mb-2">Comparison Result:</h3>
+      <p id="difference"></p>
+      <p id="finalVerdict" class="mt-2 font-bold"></p>
+    </div>
+  </div>
+
+  <script>
+    function compareLoans() {
+      const current = parseFloat(document.getElementById("currentRepayment").value) || 0;
+      const newVal = parseFloat(document.getElementById("newRepayment").value) || 0;
+      const cashback = parseFloat(document.getElementById("cashback").value) || 0;
+      const annualFee = parseFloat(document.getElementById("annualFee").value) || 0;
+      const extraBenefits = parseFloat(document.getElementById("extraBenefits").value) || 0;
+
+      const totalNewCost = newVal * 12 + annualFee - cashback - extraBenefits;
+      const totalCurrentCost = current * 12;
+
+      const diff = totalCurrentCost - totalNewCost;
+
+      document.getElementById("comparisonResult").classList.remove("hidden");
+      document.getElementById("difference").textContent = `Estimated annual difference: $${diff.toFixed(2)}`;
+
+      document.getElementById("finalVerdict").textContent = diff > 0
+        ? `✔️ You may save approximately $${diff.toFixed(2)} per year with the new loan.`
+        : diff < 0
+        ? `❌ The new loan may cost you $${Math.abs(diff).toFixed(2)} more annually.`
+        : `⚖️ No difference in annual repayments.`;
+    }
+  </script>
+
+  <style>
+    .input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.375rem;
+    }
+  </style>
+</body>
+</html>
