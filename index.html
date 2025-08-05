@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home Loan Comparison Calculator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🏠 Home Loan Comparison Calculator</h1>
+
+    <form id="loanForm">
+      <h2>Current Loan</h2>
+      <label>Loan Amount: <input type="number" id="currAmount" required></label>
+      <label>Interest Rate (%): <input type="number" id="currRate" step="0.01" required></label>
+      <label>Tenure Left (Years): <input type="number" id="currYears" required></label>
+      <label>Repayment Frequency:
+        <select id="currFreq">
+          <option value="weekly">Weekly</option>
+          <option value="fortnightly">Fortnightly</option>
+          <option value="monthly" selected>Monthly</option>
+        </select>
+      </label>
+      <label>Repayment Amount: <input type="number" id="currRepay" required></label>
+
+      <h2>New Loan</h2>
+      <label>New Interest Rate (%): <input type="number" id="newRate" step="0.01" required></label>
+      <label>New Tenure (Years): <input type="number" id="newYears" required></label>
+      <label>Cashback Offered: <input type="number" id="cashback" value="0"></label>
+      <label>Annual Bank Charges: <input type="number" id="annualFee" value="0"></label>
+      <label>Additional Benefits ($): <input type="number" id="benefits" value="0"></label>
+
+      <button type="submit">Compare Loans</button>
+    </form>
+
+    <div id="results" class="hidden">
+      <h2>Comparison Result</h2>
+      <div id="comparisonTable"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
