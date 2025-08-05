@@ -2,43 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Home Loan Comparison Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Loan Comparison Portal</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #004080;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav {
+      margin-top: 1rem;
+    }
+    nav a {
+      color: #ffffff;
+      text-decoration: none;
+      margin: 0 10px;
+      font-weight: 600;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 1.1rem;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🏠 Home Loan Comparison Calculator</h1>
-
-    <form id="loanForm">
-      <h2>Current Loan</h2>
-      <label>Loan Amount: <input type="number" id="currAmount" required></label>
-      <label>Interest Rate (%): <input type="number" id="currRate" step="0.01" required></label>
-      <label>Tenure Left (Years): <input type="number" id="currYears" required></label>
-      <label>Repayment Frequency:
-        <select id="currFreq">
-          <option value="weekly">Weekly</option>
-          <option value="fortnightly">Fortnightly</option>
-          <option value="monthly" selected>Monthly</option>
-        </select>
-      </label>
-      <label>Repayment Amount: <input type="number" id="currRepay" required></label>
-
-      <h2>New Loan</h2>
-      <label>New Interest Rate (%): <input type="number" id="newRate" step="0.01" required></label>
-      <label>New Tenure (Years): <input type="number" id="newYears" required></label>
-      <label>Cashback Offered: <input type="number" id="cashback" value="0"></label>
-      <label>Annual Bank Charges: <input type="number" id="annualFee" value="0"></label>
-      <label>Additional Benefits ($): <input type="number" id="benefits" value="0"></label>
-
-      <button type="submit">Compare Loans</button>
-    </form>
-
-    <div id="results" class="hidden">
-      <h2>Comparison Result</h2>
-      <div id="comparisonTable"></div>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
+  <header>
+    <h1>Welcome to Home Loan Comparison Portal (AUD)</h1>
+    <nav>
+      <a href="current.html">Current Home Loan Calculator</a>
+      <a href="new.html">New Home Loan Calculator</a>
+      <a href="compare.html">Compare Home Loans & Profit/Loss</a>
+    </nav>
+  </header>
+  <main>
+    <p>This portal helps you compare your existing and new home loans and provides a detailed profit or loss outcome.</p>
+  </main>
 </body>
 </html>
