@@ -95,20 +95,18 @@
       results.push(`<strong>Current Loan Repayments:</strong>`);
       results.push(`Weekly: $${currEMI.weekly.toFixed(2)}, Fortnightly: $${currEMI.fortnightly.toFixed(2)}, Monthly: $${currEMI.monthly.toFixed(2)}`);
       results.push(`Total per year: $${currAnnual.toFixed(2)}`);
-      results.push(`Effective rate/month: ${(currAnnual / currLoan / 12 * 100).toFixed(2)}%`);
-      results.push(`Effective rate/year: ${(currAnnual / currLoan * 100).toFixed(2)}%`);
+      results.push(`Interest Rate: ${currRate.toFixed(2)}%`);
 
       results.push(`<strong>New Loan Repayments:</strong>`);
       results.push(`Weekly: $${newEMI.weekly.toFixed(2)}, Fortnightly: $${newEMI.fortnightly.toFixed(2)}, Monthly: $${newEMI.monthly.toFixed(2)}`);
       results.push(`Total per year: $${newAnnual.toFixed(2)}`);
-      results.push(`Effective rate/month: ${(newAnnual / newLoan / 12 * 100).toFixed(2)}%`);
-      results.push(`Effective rate/year: ${(newAnnual / newLoan * 100).toFixed(2)}%`);
+      results.push(`Interest Rate: ${newRate.toFixed(2)}%`);
 
       const diffWeek = newEMI.weekly - currEMI.weekly;
       const diffFort = newEMI.fortnightly - currEMI.fortnightly;
       const diffMonth = newEMI.monthly - currEMI.monthly;
       const diffYear = newAnnual - currAnnual;
-      const diffRate = (newAnnual / newLoan - currAnnual / currLoan) * 100;
+      const diffRate = newRate - currRate;
       const chargeDiff = newBankCharges - currBankCharges;
       const refundDiff = newRefunds - currRefunds;
       const cashbackDiff = newCashback - currCashback;
@@ -122,7 +120,7 @@
       results.push(`Repayment change - Fortnightly: $${diffFort.toFixed(2)}`);
       results.push(`Repayment change - Monthly: $${diffMonth.toFixed(2)}`);
       results.push(`Repayment change - Yearly: $${diffYear.toFixed(2)}`);
-      results.push(`Effective rate % change per year: ${diffRate.toFixed(2)}%`);
+      results.push(`Interest Rate Difference: ${diffRate.toFixed(2)}%`);
       results.push(`Bank charges difference: $${chargeDiff.toFixed(2)}`);
       results.push(`Other refunds difference: $${refundDiff.toFixed(2)}`);
       results.push(`Cashback difference: $${cashbackDiff.toFixed(2)}`);
