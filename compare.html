@@ -1,55 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compare Home Loans</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 p-6">
-  <div class="max-w-6xl mx-auto bg-white p-8 rounded shadow">
+  <div class="max-w-7xl mx-auto bg-white p-8 rounded shadow">
     <h1 class="text-3xl font-bold mb-8 text-center">Compare Home Loans & Profit/Loss Outcome</h1>
 
     <!-- Section 1: Current Loan -->
     <div class="mb-10">
       <h2 class="text-xl font-semibold mb-4">1. Current Home Loan Details</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <input id="currLoanAmount" type="number" placeholder="Loan Amount ($)" class="input" />
-        <input id="currYear" type="number" placeholder="Loan Taken Year" class="input" />
-        <input id="currInterest" type="number" step="0.01" placeholder="Interest Rate (%)" class="input" />
+        <input id="currLoanAmount" type="number" placeholder="Current Loan Amount ($)" class="input">
+        <input id="currInterest" type="number" step="0.01" placeholder="Current Interest Rate (%)" class="input">
         <select id="currFrequency" class="input">
           <option value="weekly">Weekly</option>
           <option value="fortnightly">Fortnightly</option>
           <option value="monthly">Monthly</option>
         </select>
-        <input id="currBankCharges" type="number" placeholder="Bank Charges ($/year)" class="input" />
-        <input id="currCashback" type="number" placeholder="Cashback Received ($)" class="input" />
-        <input id="currRefunds" type="number" placeholder="Other Refunds ($)" class="input" />
+        <input id="currBankCharges" type="number" placeholder="Bank Charges ($/year)" class="input">
+        <input id="currCashback" type="number" placeholder="Cashback Received ($/year)" class="input">
+        <input id="currRefunds" type="number" placeholder="Other Refunds ($/month)" class="input">
       </div>
-      <div class="mt-4 text-sm text-gray-600">Results will be shown after clicking "Compare".</div>
     </div>
 
     <!-- Section 2: New Loan -->
     <div class="mb-10">
       <h2 class="text-xl font-semibold mb-4">2. New Home Loan Details</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <input id="newLoanAmount" type="number" placeholder="Loan Amount ($)" class="input" />
-        <input id="newYear" type="number" placeholder="Loan Taken Year" class="input" />
-        <input id="newInterest" type="number" step="0.01" placeholder="Interest Rate (%)" class="input" />
+        <input id="newLoanAmount" type="number" placeholder="New Loan Amount ($)" class="input">
+        <input id="newInterest" type="number" step="0.01" placeholder="New Interest Rate (%)" class="input">
         <select id="newFrequency" class="input">
           <option value="weekly">Weekly</option>
           <option value="fortnightly">Fortnightly</option>
           <option value="monthly">Monthly</option>
         </select>
-        <input id="newBankCharges" type="number" placeholder="Bank Charges ($/year)" class="input" />
-        <input id="newCashback" type="number" placeholder="Cashback Received ($)" class="input" />
-        <input id="newRefunds" type="number" placeholder="Other Refunds ($)" class="input" />
+        <input id="newBankCharges" type="number" placeholder="Bank Charges ($/year)" class="input">
+        <input id="newCashback" type="number" placeholder="Cashback Received ($/year)" class="input">
+        <input id="newRefunds" type="number" placeholder="Other Refunds ($/month)" class="input">
       </div>
     </div>
 
     <button onclick="compareLoans()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 mb-6">Compare</button>
 
-    <!-- Section 3: Comparison Output -->
+    <!-- Section 3: Output -->
     <div id="comparisonResult" class="p-4 bg-gray-50 rounded hidden">
       <h2 class="text-xl font-bold mb-4">3. Comparison Results</h2>
       <div id="resultsText" class="space-y-2 text-gray-800"></div>
@@ -57,61 +54,84 @@
   </div>
 
   <script>
-    function calculateEMI(principal, rate, years, freq) {
-      const periods = { weekly: 52, fortnightly: 26, monthly: 12 }[freq];
+    function calculateEMI(principal, rate, frequency) {
+      const freqMap = { weekly: 52, fortnightly: 26, monthly: 12 };
+      const periods = freqMap[frequency];
       const r = rate / 100 / periods;
-      const n = years * periods;
-      return (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      const n = 30 * periods; // Assuming fixed 30-year loan
+      const emi = (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+      return emi;
     }
 
     function compareLoans() {
       const get = id => parseFloat(document.getElementById(id).value) || 0;
       const getStr = id => document.getElementById(id).value;
 
-      const currLoan = get("currLoanAmount"), currRate = get("currInterest"), currYear = get("currYear"), currFreq = getStr("currFrequency");
-      const currCharges = get("currBankCharges"), currCashback = get("currCashback"), currRefunds = get("currRefunds");
+      const freqMap = { weekly: 52, fortnightly: 26, monthly: 12 };
 
-      const newLoan = get("newLoanAmount"), newRate = get("newInterest"), newYear = get("newYear"), newFreq = getStr("newFrequency");
-      const newCharges = get("newBankCharges"), newCashback = get("newCashback"), newRefunds = get("newRefunds");
+      // Current loan
+      const currLoan = get("currLoanAmount"), currRate = get("currInterest"), currFreq = getStr("currFrequency");
+      const currBankCharges = get("currBankCharges"), currCashback = get("currCashback"), currRefunds = get("currRefunds") * 12;
 
-      const yearsLeft = new Date().getFullYear() - currYear;
-      const yearsNew = new Date().getFullYear() - newYear;
+      // New loan
+      const newLoan = get("newLoanAmount"), newRate = get("newInterest"), newFreq = getStr("newFrequency");
+      const newBankCharges = get("newBankCharges"), newCashback = get("newCashback"), newRefunds = get("newRefunds") * 12;
 
       const currEMI = {
-        weekly: calculateEMI(currLoan, currRate, yearsLeft, 'weekly'),
-        fortnightly: calculateEMI(currLoan, currRate, yearsLeft, 'fortnightly'),
-        monthly: calculateEMI(currLoan, currRate, yearsLeft, 'monthly')
+        weekly: calculateEMI(currLoan, currRate, 'weekly'),
+        fortnightly: calculateEMI(currLoan, currRate, 'fortnightly'),
+        monthly: calculateEMI(currLoan, currRate, 'monthly')
+      };
+      const newEMI = {
+        weekly: calculateEMI(newLoan, newRate, 'weekly'),
+        fortnightly: calculateEMI(newLoan, newRate, 'fortnightly'),
+        monthly: calculateEMI(newLoan, newRate, 'monthly')
       };
 
-      const newEMI = {
-        weekly: calculateEMI(newLoan, newRate, yearsNew, 'weekly'),
-        fortnightly: calculateEMI(newLoan, newRate, yearsNew, 'fortnightly'),
-        monthly: calculateEMI(newLoan, newRate, yearsNew, 'monthly')
-      };
+      const currAnnual = currEMI[currFreq] * freqMap[currFreq];
+      const newAnnual = newEMI[newFreq] * freqMap[newFreq];
 
       const results = [];
-      results.push(`Current Repayment - Weekly: $${currEMI.weekly.toFixed(2)}, Fortnightly: $${currEMI.fortnightly.toFixed(2)}, Monthly: $${currEMI.monthly.toFixed(2)}`);
-      results.push(`New Repayment - Weekly: $${newEMI.weekly.toFixed(2)}, Fortnightly: $${newEMI.fortnightly.toFixed(2)}, Monthly: $${newEMI.monthly.toFixed(2)}`);
+      results.push(`<strong>Current Loan Repayments:</strong>`);
+      results.push(`Weekly: $${currEMI.weekly.toFixed(2)}, Fortnightly: $${currEMI.fortnightly.toFixed(2)}, Monthly: $${currEMI.monthly.toFixed(2)}`);
+      results.push(`Total per year: $${currAnnual.toFixed(2)}`);
+      results.push(`Effective rate/month: ${(currAnnual / currLoan / 12 * 100).toFixed(2)}%`);
+      results.push(`Effective rate/year: ${(currAnnual / currLoan * 100).toFixed(2)}%`);
 
-      const totalCurrYear = currEMI[currFreq] * { weekly: 52, fortnightly: 26, monthly: 12 }[currFreq];
-      const totalNewYear = newEMI[newFreq] * { weekly: 52, fortnightly: 26, monthly: 12 }[newFreq];
+      results.push(`<strong>New Loan Repayments:</strong>`);
+      results.push(`Weekly: $${newEMI.weekly.toFixed(2)}, Fortnightly: $${newEMI.fortnightly.toFixed(2)}, Monthly: $${newEMI.monthly.toFixed(2)}`);
+      results.push(`Total per year: $${newAnnual.toFixed(2)}`);
+      results.push(`Effective rate/month: ${(newAnnual / newLoan / 12 * 100).toFixed(2)}%`);
+      results.push(`Effective rate/year: ${(newAnnual / newLoan * 100).toFixed(2)}%`);
 
-      const repaymentDiff = totalCurrYear - totalNewYear;
-      const chargeDiff = currCharges - newCharges;
-      const cashbackDiff = newCashback - currCashback;
+      const diffWeek = newEMI.weekly - currEMI.weekly;
+      const diffFort = newEMI.fortnightly - currEMI.fortnightly;
+      const diffMonth = newEMI.monthly - currEMI.monthly;
+      const diffYear = newAnnual - currAnnual;
+      const diffRate = (newAnnual / newLoan - currAnnual / currLoan) * 100;
+      const chargeDiff = newBankCharges - currBankCharges;
       const refundDiff = newRefunds - currRefunds;
+      const cashbackDiff = newCashback - currCashback;
 
-      const netDiff = repaymentDiff + chargeDiff + cashbackDiff + refundDiff;
+      const currTotal = currAnnual + currBankCharges - currRefunds - currCashback;
+      const newTotal = newAnnual + newBankCharges - newRefunds - newCashback;
+      const overallDiff = newTotal - currTotal;
 
-      results.push(`Annual Repayment Difference: $${repaymentDiff.toFixed(2)}`);
-      results.push(`Bank Charges Difference: $${chargeDiff.toFixed(2)}`);
-      results.push(`Cashback Difference: $${cashbackDiff.toFixed(2)}`);
-      results.push(`Other Refunds Difference: $${refundDiff.toFixed(2)}`);
+      results.push(`<strong>Comparison:</strong>`);
+      results.push(`Repayment change - Weekly: $${diffWeek.toFixed(2)}`);
+      results.push(`Repayment change - Fortnightly: $${diffFort.toFixed(2)}`);
+      results.push(`Repayment change - Monthly: $${diffMonth.toFixed(2)}`);
+      results.push(`Repayment change - Yearly: $${diffYear.toFixed(2)}`);
+      results.push(`Effective rate % change per year: ${diffRate.toFixed(2)}%`);
+      results.push(`Bank charges difference: $${chargeDiff.toFixed(2)}`);
+      results.push(`Other refunds difference: $${refundDiff.toFixed(2)}`);
+      results.push(`Cashback difference: $${cashbackDiff.toFixed(2)}`);
+      results.push(`<strong>Overall repayment - Current: $${currTotal.toFixed(2)}</strong>`);
+      results.push(`<strong>Overall repayment - New: $${newTotal.toFixed(2)}</strong>`);
+      results.push(`<strong>Overall difference: $${overallDiff.toFixed(2)} (${overallDiff < 0 ? 'Profit' : overallDiff > 0 ? 'Loss' : 'No Change'})</strong>`);
+      results.push(`<strong>Final rate % based on overall repayment and new loan: ${(newTotal / newLoan * 100).toFixed(2)}%</strong>`);
 
-      results.push(`<strong>Overall Profit/Loss: $${netDiff.toFixed(2)} (${netDiff > 0 ? 'Profit' : netDiff < 0 ? 'Loss' : 'No Change'})</strong>`);
-
-      const resultHTML = results.map(line => `<p>${line}</p>`).join("");
-      document.getElementById("resultsText").innerHTML = resultHTML;
+      document.getElementById("resultsText").innerHTML = results.map(r => `<p>${r}</p>`).join("");
       document.getElementById("comparisonResult").classList.remove("hidden");
     }
   </script>
