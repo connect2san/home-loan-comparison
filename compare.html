@@ -6,61 +6,113 @@
   <title>Compare Home Loans</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center">
-  <div class="bg-white p-8 rounded shadow-md w-full max-w-3xl">
-    <h1 class="text-2xl font-bold mb-6 text-center">Home Loan Comparison Calculator</h1>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-6xl mx-auto bg-white p-8 rounded shadow">
+    <h1 class="text-3xl font-bold mb-8 text-center">Compare Home Loans & Profit/Loss Outcome</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Current Loan Inputs -->
-      <div>
-        <h2 class="font-semibold mb-2">Current Loan</h2>
-        <input type="number" id="currentRepayment" placeholder="Monthly Repayment ($)" class="input mb-2">
+    <!-- Section 1: Current Loan -->
+    <div class="mb-10">
+      <h2 class="text-xl font-semibold mb-4">1. Current Home Loan Details</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input id="currLoanAmount" type="number" placeholder="Loan Amount ($)" class="input" />
+        <input id="currYear" type="number" placeholder="Loan Taken Year" class="input" />
+        <input id="currInterest" type="number" step="0.01" placeholder="Interest Rate (%)" class="input" />
+        <select id="currFrequency" class="input">
+          <option value="weekly">Weekly</option>
+          <option value="fortnightly">Fortnightly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+        <input id="currBankCharges" type="number" placeholder="Bank Charges ($/year)" class="input" />
+        <input id="currCashback" type="number" placeholder="Cashback Received ($)" class="input" />
+        <input id="currRefunds" type="number" placeholder="Other Refunds ($)" class="input" />
       </div>
+      <div class="mt-4 text-sm text-gray-600">Results will be shown after clicking "Compare".</div>
+    </div>
 
-      <!-- New Loan Inputs -->
-      <div>
-        <h2 class="font-semibold mb-2">New Loan</h2>
-        <input type="number" id="newRepayment" placeholder="Monthly Repayment ($)" class="input mb-2">
+    <!-- Section 2: New Loan -->
+    <div class="mb-10">
+      <h2 class="text-xl font-semibold mb-4">2. New Home Loan Details</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input id="newLoanAmount" type="number" placeholder="Loan Amount ($)" class="input" />
+        <input id="newYear" type="number" placeholder="Loan Taken Year" class="input" />
+        <input id="newInterest" type="number" step="0.01" placeholder="Interest Rate (%)" class="input" />
+        <select id="newFrequency" class="input">
+          <option value="weekly">Weekly</option>
+          <option value="fortnightly">Fortnightly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+        <input id="newBankCharges" type="number" placeholder="Bank Charges ($/year)" class="input" />
+        <input id="newCashback" type="number" placeholder="Cashback Received ($)" class="input" />
+        <input id="newRefunds" type="number" placeholder="Other Refunds ($)" class="input" />
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-      <input type="number" id="cashback" placeholder="Cashback Amount ($)" class="input mb-2">
-      <input type="number" id="annualFee" placeholder="Annual Fee ($)" class="input mb-2">
-    </div>
+    <button onclick="compareLoans()" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 mb-6">Compare</button>
 
-    <input type="number" id="extraBenefits" placeholder="Extra Benefits Amount ($)" class="input w-full mb-4">
-
-    <button onclick="compareLoans()" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 w-full">Compare</button>
-
-    <div id="comparisonResult" class="mt-6 hidden p-4 bg-gray-100 rounded">
-      <h3 class="text-lg font-semibold mb-2">Comparison Result:</h3>
-      <p id="difference"></p>
-      <p id="finalVerdict" class="mt-2 font-bold"></p>
+    <!-- Section 3: Comparison Output -->
+    <div id="comparisonResult" class="p-4 bg-gray-50 rounded hidden">
+      <h2 class="text-xl font-bold mb-4">3. Comparison Results</h2>
+      <div id="resultsText" class="space-y-2 text-gray-800"></div>
     </div>
   </div>
 
   <script>
+    function calculateEMI(principal, rate, years, freq) {
+      const periods = { weekly: 52, fortnightly: 26, monthly: 12 }[freq];
+      const r = rate / 100 / periods;
+      const n = years * periods;
+      return (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    }
+
     function compareLoans() {
-      const current = parseFloat(document.getElementById("currentRepayment").value) || 0;
-      const newVal = parseFloat(document.getElementById("newRepayment").value) || 0;
-      const cashback = parseFloat(document.getElementById("cashback").value) || 0;
-      const annualFee = parseFloat(document.getElementById("annualFee").value) || 0;
-      const extraBenefits = parseFloat(document.getElementById("extraBenefits").value) || 0;
+      const get = id => parseFloat(document.getElementById(id).value) || 0;
+      const getStr = id => document.getElementById(id).value;
 
-      const totalNewCost = newVal * 12 + annualFee - cashback - extraBenefits;
-      const totalCurrentCost = current * 12;
+      const currLoan = get("currLoanAmount"), currRate = get("currInterest"), currYear = get("currYear"), currFreq = getStr("currFrequency");
+      const currCharges = get("currBankCharges"), currCashback = get("currCashback"), currRefunds = get("currRefunds");
 
-      const diff = totalCurrentCost - totalNewCost;
+      const newLoan = get("newLoanAmount"), newRate = get("newInterest"), newYear = get("newYear"), newFreq = getStr("newFrequency");
+      const newCharges = get("newBankCharges"), newCashback = get("newCashback"), newRefunds = get("newRefunds");
 
+      const yearsLeft = new Date().getFullYear() - currYear;
+      const yearsNew = new Date().getFullYear() - newYear;
+
+      const currEMI = {
+        weekly: calculateEMI(currLoan, currRate, yearsLeft, 'weekly'),
+        fortnightly: calculateEMI(currLoan, currRate, yearsLeft, 'fortnightly'),
+        monthly: calculateEMI(currLoan, currRate, yearsLeft, 'monthly')
+      };
+
+      const newEMI = {
+        weekly: calculateEMI(newLoan, newRate, yearsNew, 'weekly'),
+        fortnightly: calculateEMI(newLoan, newRate, yearsNew, 'fortnightly'),
+        monthly: calculateEMI(newLoan, newRate, yearsNew, 'monthly')
+      };
+
+      const results = [];
+      results.push(`Current Repayment - Weekly: $${currEMI.weekly.toFixed(2)}, Fortnightly: $${currEMI.fortnightly.toFixed(2)}, Monthly: $${currEMI.monthly.toFixed(2)}`);
+      results.push(`New Repayment - Weekly: $${newEMI.weekly.toFixed(2)}, Fortnightly: $${newEMI.fortnightly.toFixed(2)}, Monthly: $${newEMI.monthly.toFixed(2)}`);
+
+      const totalCurrYear = currEMI[currFreq] * { weekly: 52, fortnightly: 26, monthly: 12 }[currFreq];
+      const totalNewYear = newEMI[newFreq] * { weekly: 52, fortnightly: 26, monthly: 12 }[newFreq];
+
+      const repaymentDiff = totalCurrYear - totalNewYear;
+      const chargeDiff = currCharges - newCharges;
+      const cashbackDiff = newCashback - currCashback;
+      const refundDiff = newRefunds - currRefunds;
+
+      const netDiff = repaymentDiff + chargeDiff + cashbackDiff + refundDiff;
+
+      results.push(`Annual Repayment Difference: $${repaymentDiff.toFixed(2)}`);
+      results.push(`Bank Charges Difference: $${chargeDiff.toFixed(2)}`);
+      results.push(`Cashback Difference: $${cashbackDiff.toFixed(2)}`);
+      results.push(`Other Refunds Difference: $${refundDiff.toFixed(2)}`);
+
+      results.push(`<strong>Overall Profit/Loss: $${netDiff.toFixed(2)} (${netDiff > 0 ? 'Profit' : netDiff < 0 ? 'Loss' : 'No Change'})</strong>`);
+
+      const resultHTML = results.map(line => `<p>${line}</p>`).join("");
+      document.getElementById("resultsText").innerHTML = resultHTML;
       document.getElementById("comparisonResult").classList.remove("hidden");
-      document.getElementById("difference").textContent = `Estimated annual difference: $${diff.toFixed(2)}`;
-
-      document.getElementById("finalVerdict").textContent = diff > 0
-        ? `✔️ You may save approximately $${diff.toFixed(2)} per year with the new loan.`
-        : diff < 0
-        ? `❌ The new loan may cost you $${Math.abs(diff).toFixed(2)} more annually.`
-        : `⚖️ No difference in annual repayments.`;
     }
   </script>
 
